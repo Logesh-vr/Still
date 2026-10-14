@@ -1,0 +1,3 @@
+<resources>
+    <string name="service_description">Still detects which app is open and covers Instagram or sends you home when your chosen lock or daily allowance requires blocking. It does not read screen text, messages, passwords or notifications. Nothing is uploaded. You can revoke this permission in Android Settings.</string>
+</resources>
