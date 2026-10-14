@@ -1,0 +1,44 @@
+# Android Studio and machine-specific SDK paths
+.idea/
+*.iml
+local.properties
+.DS_Store
+Thumbs.db
+
+# Gradle, compiler output, local tests and device captures
+.gradle/
+.kotlin/
+build/
+out/
+captures/
+*.class
+*.dex
+*.hprof
+*.log
+
+# Keep one explicitly reviewed APK in the repository
+*.apk
+*.ap_
+*.aab
+!/releases/Still-1.1.0.apk
+
+# Signing keys and local credentials
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+key.properties
+signing.properties
+*password*.txt
+.env
+.env.*
+*.zip
+PRIVATE*/
+signing/
+secrets/
+
+# Temporary scripts and toolchain downloads
+work/
+tmp/
