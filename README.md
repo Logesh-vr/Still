@@ -1,4 +1,4 @@
-# Still
+# Still(for my personal use)
 
 An offline Android app that blocks Instagram after **one hour of Instagram use each day**. It also lets you start a separate timed lock whenever you want a break from the app.
 
