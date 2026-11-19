@@ -12,7 +12,7 @@ Android usage-event queries can return events for other apps. Still uses those t
 
 ## What it saves
 
-Private SharedPreferences store timed-lock deadlines, the current daily window, aggregate daily Instagram usage, and clock-protection state. Backup is disabled.
+Private SharedPreferences store timed-lock deadlines, the current daily window, aggregate daily Instagram usage, clock-protection state, and whether the user paused Still for payment access. Backup is disabled.
 
 The accessibility configuration does not request window-content retrieval or gesture capability. Still does not read messages, passwords, screenshots, screen text, or notification contents.
 

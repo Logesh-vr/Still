@@ -26,6 +26,12 @@ public final class BlockerService extends AccessibilityService {
     private TextView overlayDetail;
 
     public static boolean connected() { return instance != null; }
+    public static boolean pauseForPayment() {
+        BlockerService service = instance;
+        if (service == null) return false;
+        service.handler.post(service::disableSelf);
+        return true;
+    }
     public static void refresh() {
         BlockerService service = instance;
         if (service != null) service.handler.post(service::check);

@@ -21,5 +21,7 @@ Record the phone model, Android version, APK version, and service/permission sta
 | Revoke Usage access with Accessibility still enabled | Instagram blocks until usage access returns |
 | Change the clock within a boot | The manual lock does not shorten; a large wall-clock shift locks the daily rule |
 | Open calls, other apps, and Settings | They remain accessible; dismiss Still's block overlay using its home button if shown |
+| Use **Pause Still for a payment**, then open a wallet app | Still's Accessibility service stops; confirm the wallet opens on the device |
+| Return to Still after the payment pause | Still explains that Accessibility must be switched on manually; re-enable it in Android settings and confirm Instagram blocking resumes |
 
 Do not count a compilation result, a screenshot, or the host-side policy suite as evidence that these device checks passed. Report failures with [the contribution guide](../CONTRIBUTING.md).

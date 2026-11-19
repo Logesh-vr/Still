@@ -4,7 +4,7 @@ An offline Android app that blocks Instagram after **one hour of Instagram use e
 
 Time in other apps does not count toward the Instagram limit. Instagram and Instagram Lite share the daily hour. The daily rule resets at local midnight and starts automatically after permission setup.
 
-[Download Still 1.1.0 APK](https://github.com/Logesh-vr/Still/raw/refs/heads/main/releases/Still-1.1.0.apk) · [Install and enable](docs/INSTALLATION.md) · [Build from source](docs/BUILDING.md)
+[Download Still 1.2.0 APK](https://github.com/Logesh-vr/Still/raw/refs/heads/main/releases/Still-1.2.0.apk) · [Install and enable](docs/INSTALLATION.md) · [Build from source](docs/BUILDING.md)
 
 **Status:** signed test build for Android 8.0+. Compilation, 30 policy assertions, APK packaging, and signatures have been checked. Phone installation and blocking behavior have not been verified. See [validation](docs/VALIDATION.md) and the [device checklist](docs/DEVICE_TESTING.md).
 
@@ -25,6 +25,10 @@ Install the APK, open Still, and grant:
 - **Usage access:** reads Android usage events to count Instagram foreground time.
 
 Once both are ready, the daily rule runs without starting a timer. Use **Lock Instagram now** for the separate immediate lock. Missing Usage access causes Instagram to block while the accessibility service is enabled. Follow [the setup guide](docs/INSTALLATION.md) for restricted-settings and battery troubleshooting.
+
+### Payment apps
+
+Some payment apps refuse to run while an Accessibility service is enabled. In Still, tap **Pause Still for a payment** before opening one. Still turns its own service off; after paying, return to Still, tap **Re-enable Still after payment**, and switch it on in Android Accessibility settings. Android does not let a regular app turn an Accessibility service back on automatically, so this requires a manual switch. See [Android's AccessibilityService lifecycle](https://developer.android.com/reference/android/accessibilityservice/AccessibilityService#disableSelf()) and [secure settings restrictions](https://developer.android.com/reference/android/provider/Settings.Secure).
 
 ## How it works
 

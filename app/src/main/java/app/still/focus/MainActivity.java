@@ -28,7 +28,7 @@ public final class MainActivity extends Activity {
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private LinearLayout root, durationRow;
     private TextView status, setupDetail, dailyDetail, dailyMeta, lockDetail, selectedLabel;
-    private Button accessibilityButton, usageButton, startButton;
+    private Button accessibilityButton, usageButton, startButton, paymentButton;
     private TimerView timer;
     private int selectedMinutes = 60;
     private boolean querying, resumed;
@@ -79,6 +79,7 @@ public final class MainActivity extends Activity {
         add(setupCard, heading("Make the blocker ready"), 0);
         setupDetail = Ui.text(this, "", 14, Ui.MUTED); add(setupCard, setupDetail, 8);
         accessibilityButton = Ui.button(this, "Enable Instagram blocking", this::showDisclosure, false); add(setupCard, accessibilityButton, 14);
+        paymentButton = Ui.button(this, "Pause Still for a payment", this::showPaymentPause, false); add(setupCard, paymentButton, 10);
         usageButton = Ui.button(this, "Allow daily usage counting", () -> openSettings(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS,
                 Uri.parse("package:" + getPackageName()))), false); add(setupCard, usageButton, 10);
         Button help = Ui.button(this, "Setup help & limits", this::showHelp, false); add(setupCard, help, 10);
@@ -116,9 +117,28 @@ public final class MainActivity extends Activity {
         return false;
     }
     private boolean ready() { return accessibilityEnabled() && BlockerService.connected(); }
+    private void showPaymentPause() {
+        if (!ready()) { openSettings(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); return; }
+        new AlertDialog.Builder(this).setTitle("Pause Still for a payment")
+                .setMessage("Still will turn off its Accessibility service so you can open a payment app. After paying, return to Still and switch it back on in Android Accessibility settings. Android does not let regular apps turn an Accessibility service back on automatically.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Pause Still", (dialog, which) -> {
+                    if (!BlockerService.pauseForPayment()) {
+                        error("Still is reconnecting. Try again once the blocker status is active.");
+                        return;
+                    }
+                    getSharedPreferences("payment_mode", MODE_PRIVATE).edit().putBoolean("paused", true).apply();
+                    render();
+                }).show();
+    }
     private void render() {
         long remaining = store.lockRemaining(); int budget = store.budget();
         boolean ready = ready(), usage = UsageReader.allowed(this);
+        boolean paymentPaused = getSharedPreferences("payment_mode", MODE_PRIVATE).getBoolean("paused", false);
+        if (accessibilityEnabled() && paymentPaused) {
+            getSharedPreferences("payment_mode", MODE_PRIVATE).edit().putBoolean("paused", false).apply();
+            paymentPaused = false;
+        }
         boolean blocked = Rules.blocked(remaining, budget > 0, usage, budget == 0 || store.clockStable(), store.used(), budget * 60000L);
         status.setText(!ready ? "SETUP NEEDED · blocking is inactive" : !usage ? "SETUP NEEDED · allow Instagram usage access" : blocked ? "INSTAGRAM LOCKED" : "AUTOMATIC 1-HOUR LIMIT ACTIVE");
         status.setTextColor(ready ? Ui.GREEN : Ui.MUTED);
@@ -150,6 +170,7 @@ public final class MainActivity extends Activity {
                 : accessibilityEnabled() ? "Permission is on, but the blocker is reconnecting. If this persists, toggle Still off and on in Accessibility."
                 : "Enable Still in Accessibility. It only checks app names and sends you home when Instagram is locked.");
         accessibilityButton.setText(ready ? "Blocking enabled · open settings" : "Enable Instagram blocking");
+        paymentButton.setText(ready ? "Pause Still for a payment" : paymentPaused ? "Re-enable Still after payment" : "Accessibility is off · open settings");
         usageButton.setText(usage ? "Usage access enabled · open settings" : "Allow daily usage counting");
         if (resumed && budget > 0 && usage && !querying && android.os.SystemClock.elapsedRealtime() - lastQuery > 2000) {
             querying = true; lastQuery = android.os.SystemClock.elapsedRealtime();

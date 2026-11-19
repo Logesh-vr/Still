@@ -1,6 +1,6 @@
 # Install and enable Still
 
-Download [Still 1.1.0](../releases/Still-1.1.0.apk). Android 8.0 or newer is required. This is a signed test build; verify blocking on your phone before relying on it.
+Download [Still 1.2.0](../releases/Still-1.2.0.apk). Android 8.0 or newer is required. This is a signed test build; verify blocking on your phone before relying on it.
 
 1. Open the APK on your phone and allow installation from the browser or file manager when Android asks.
 2. Open Still and tap **Enable Instagram blocking**. Read the disclosure, then enable **Still · Instagram blocker** under Accessibility → Installed/Downloaded apps.
@@ -21,9 +21,13 @@ If the phone stops Still's accessibility service, allow background activity for 
 
 Confirm service connection after a reboot. Phone manufacturers differ in how they manage background apps.
 
+## Opening payment apps
+
+Some payment apps reject an active Accessibility service. Before paying, open Still and tap **Pause Still for a payment**, then confirm. Still disables its own service so the payment app can open. After payment, return to Still, tap **Re-enable Still after payment**, and turn Still back on in Android Accessibility settings. The switch back on must be manual: Android only allows the user or system to enable an Accessibility service. A normal app cannot restore it automatically.
+
 ## Updates
 
-The checked-in 1.1.0 APK uses the same signing certificate as the previously distributed build. Installing it as an update preserves saved timed-lock state. The current rule is always 60 minutes per day; older configurable allowance settings are no longer used.
+The checked-in 1.2.0 APK uses the same signing certificate as the previously distributed build. Installing it as an update preserves saved timed-lock state. The current rule is always 60 minutes per day; older configurable allowance settings are no longer used.
 
 A debug APK built by CI or your local Gradle installation uses a different signing key. It cannot install directly over the signed distribution. Build with the owner's original signing key for an in-place update.
 

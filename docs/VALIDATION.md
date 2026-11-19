@@ -1,4 +1,18 @@
-# Validation of Still 1.1.0
+# Validation of Still
+
+## Still 1.2.0 update
+
+Built on 2026-11-19. Package `app.still.focus`, version code 3, minimum Android API 26, target API 36.
+
+- Java sources compiled for Java 11 and D8 produced Android DEX using the locally cached Android toolchain.
+- The signed APK reports version 1.2.0 and passes Android APK signature verification for v2 and v3.
+- The update APK was verified against Still 1.1.0; both signatures use the same certificate.
+- SHA-256: `58C55AB46E7EA900DBF5CA7F445F5BD60F3CD92DEB23417CA4B9D637E7696C11`.
+- No phone or emulator was available to verify payment-app launch, the Accessibility pause in Settings, or restoring the service after payment. Follow the updated [device checklist](DEVICE_TESTING.md).
+
+Android provides `AccessibilityService.disableSelf()` for a service to stop itself. A regular third-party app cannot re-enable that service; Android's secure settings are user/system-controlled. The payment flow is therefore an explicit pause followed by a manual re-enable, not an automatic switch based on payment-app launch or transaction completion. See [Android's service lifecycle](https://developer.android.com/reference/android/accessibilityservice/AccessibilityService#disableSelf()) and [secure settings](https://developer.android.com/reference/android/provider/Settings.Secure).
+
+## Still 1.1.0 validation
 
 Built on 2026-10-14. Package `app.still.focus`, version code 2, minimum Android API 26 (Android 8.0), target API 36.
 
