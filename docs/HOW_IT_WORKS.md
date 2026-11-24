@@ -29,7 +29,7 @@ Missing usage access, unavailable usage data, or a detected clock change also ca
 
 | Class | Responsibility |
 | --- | --- |
-| `MainActivity` | Permission setup, daily usage display, and timed-lock controls |
+| `MainActivity` | Permission setup, daily usage display, and timed-lock controls, including the 24-hour preset |
 | `Rules` | One-hour limit, countdown math, blocking policy, and usage-event reducer |
 | `FocusStore` | Private settings, deadlines, daily usage high-water mark, and reset window |
 | `UsageReader` | Read Android usage events and count Instagram foreground sessions |
@@ -53,10 +53,6 @@ The service checks rules every 500 ms. Usage reads run on a background executor,
 
 The accessibility service observes app-window package names. When Instagram is detected and a rule blocks it, the service adds a touch-intercepting accessibility overlay and performs Android's Home action. The overlay explains the lock and offers a return-to-home button. If the overlay cannot be shown, the service still attempts Home and displays a toast.
 
-## Payment pause
-
-Some payment apps refuse to run while any Accessibility service is enabled. The user can confirm **Pause Still for a payment** in the app; `BlockerService` then calls Android's `disableSelf()` and disconnects. When the user returns, Still offers a shortcut back to Accessibility settings so they can turn the service on again. Android requires that re-enable action to come from the user or system. Still cannot detect when a transaction ends after its service is stopped and cannot silently re-enable itself.
-
 The service requests neither screen-content retrieval nor gesture capability. It does not suspend the Instagram package or take control of Android Settings. Calls and unrelated apps are outside the blocking rules.
 
 ## Daily reset and clock behavior
@@ -69,6 +65,6 @@ After reboot, the clock uses the later of the saved trusted time and the current
 
 ## Limits
 
-The user can disable Accessibility, force-stop Still, clear its app data, or uninstall it. Browser Instagram, renamed/cloned packages, other Android profiles, and manufacturer battery restrictions are outside the guarantee. Stronger package controls require [managed-device privileges](https://developer.android.com/work/dpc/security).
+The user can disable Accessibility, force-stop Still, clear its app data, or uninstall it; those actions stop enforcement, and uninstalling or clearing data removes the saved lock. Android restricts uninstall blocking to device/profile owners, a managed-device configuration that this APK does not request. Browser Instagram, renamed/cloned packages, other Android profiles, and manufacturer battery restrictions are also outside the guarantee. See [Android's DevicePolicyManager documentation](https://developer.android.com/reference/android/app/admin/DevicePolicyManager).
 
 The checked-in APK has compilation, policy-test, packaging, and signature checks. Device behavior has not been verified. Follow [the device checklist](DEVICE_TESTING.md) before relying on it.

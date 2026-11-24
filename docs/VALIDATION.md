@@ -1,5 +1,18 @@
 # Validation of Still
 
+## Still 1.3.0 update
+
+Built on 2026-11-24. Package `app.still.focus`, version code 4, minimum Android API 26, target API 36.
+
+- Java sources compiled for Java 11 and D8 produced Android DEX using the locally cached Android toolchain.
+- The signed APK reports version 1.3.0 and passes Android APK signature verification for v2 and v3.
+- The update APK was verified against Still 1.2.0; both signatures use the same certificate.
+- SHA-256: `B4FAA7F3A38EA18E34E1D1C9DA95EF0F1DA3C7BB11B7E2EB74B705B608C12D6E`.
+- The existing 30-assertion policy suite was not rerun for this update.
+- No phone or emulator was available to verify the 24-hour lock on-device. The feature uses the existing timed-lock storage and enforcement. Removing Still or clearing its data still removes the lock.
+
+Android's [uninstall-blocking policy](https://developer.android.com/reference/android/app/admin/DevicePolicyManager) requires device/profile-owner privileges. The standard Still APK does not enroll as a device owner, so it cannot block the user from uninstalling Still.
+
 ## Still 1.2.0 update
 
 Built on 2026-11-19. Package `app.still.focus`, version code 3, minimum Android API 26, target API 36.

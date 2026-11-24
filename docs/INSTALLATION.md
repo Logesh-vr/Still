@@ -1,13 +1,13 @@
 # Install and enable Still
 
-Download [Still 1.2.0](../releases/Still-1.2.0.apk). Android 8.0 or newer is required. This is a signed test build; verify blocking on your phone before relying on it.
+Download [Still 1.3.0](../releases/Still-1.3.0.apk). Android 8.0 or newer is required. This is a signed test build; verify blocking on your phone before relying on it.
 
 1. Open the APK on your phone and allow installation from the browser or file manager when Android asks.
 2. Open Still and tap **Enable Instagram blocking**. Read the disclosure, then enable **Still · Instagram blocker** under Accessibility → Installed/Downloaded apps.
 3. Tap **Allow daily usage counting** and enable Still under Usage access.
 4. Return to Still. When both permissions are ready and the daily hour is not exhausted, the status reads **AUTOMATIC 1-HOUR LIMIT ACTIVE**.
 
-The one-hour rule starts automatically after setup. You do not need to start a timed lock to activate it. Use the separate **Lock Instagram now** control for an immediate lock of 1 minute to 7 days.
+The one-hour rule starts automatically after setup. You do not need to start a timed lock to activate it. Use the separate **Lock Instagram now** control for an immediate lock of 1 minute to 7 days. The **24h** preset blocks Instagram for the next 24 hours from confirmation.
 
 Instagram use earlier today already counts. If it has reached one hour, Instagram will block as soon as Still reads that usage. Removing Usage access causes blocking while Accessibility remains enabled.
 
@@ -21,13 +21,13 @@ If the phone stops Still's accessibility service, allow background activity for 
 
 Confirm service connection after a reboot. Phone manufacturers differ in how they manage background apps.
 
-## Opening payment apps
+## About uninstalling Still
 
-Some payment apps reject an active Accessibility service. Before paying, open Still and tap **Pause Still for a payment**, then confirm. Still disables its own service so the payment app can open. After payment, return to Still, tap **Re-enable Still after payment**, and turn Still back on in Android Accessibility settings. The switch back on must be manual: Android only allows the user or system to enable an Accessibility service. A normal app cannot restore it automatically.
+The 24-hour lock is saved on this phone by Still. Uninstalling Still or clearing its data removes that saved lock, and Android lets the phone owner uninstall a regular app. Preventing uninstall requires device/profile-owner management privileges; this APK does not use them. See [Android's DevicePolicyManager documentation](https://developer.android.com/reference/android/app/admin/DevicePolicyManager).
 
 ## Updates
 
-The checked-in 1.2.0 APK uses the same signing certificate as the previously distributed build. Installing it as an update preserves saved timed-lock state. The current rule is always 60 minutes per day; older configurable allowance settings are no longer used.
+The checked-in 1.3.0 APK uses the same signing certificate as the previously distributed build. Installing it as an update preserves saved timed-lock state. The current rule is always 60 minutes per day; older configurable allowance settings are no longer used.
 
 A debug APK built by CI or your local Gradle installation uses a different signing key. It cannot install directly over the signed distribution. Build with the owner's original signing key for an in-place update.
 

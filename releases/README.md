@@ -1,8 +1,8 @@
 # Current APK
 
-This directory contains only the latest distributed build, **Still 1.1.0**, package `app.still.focus`, version code 2. It is a signed test APK for Android 8.0+.
+This directory contains only the latest distributed build, **Still 1.3.0**, package `app.still.focus`, version code 4. It is a signed test APK for Android 8.0+.
 
-Download [Still-1.1.0.apk](Still-1.1.0.apk), then follow [installation](../docs/INSTALLATION.md). Compare its SHA-256 against [SHA256SUMS](SHA256SUMS).
+Download [Still-1.3.0.apk](Still-1.3.0.apk), then follow [installation](../docs/INSTALLATION.md). Compare its SHA-256 against [SHA256SUMS](SHA256SUMS).
 
 The APK uses the original private signing key, verified against the previously distributed build's signing certificate. The key and its passwords are not in this repository.
 

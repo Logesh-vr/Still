@@ -20,7 +20,7 @@ captures/
 *.apk
 *.ap_
 *.aab
-!/releases/Still-1.2.0.apk
+!/releases/Still-1.3.0.apk
 
 # Signing keys and local credentials
 *.jks

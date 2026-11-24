@@ -28,7 +28,7 @@ public final class MainActivity extends Activity {
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private LinearLayout root, durationRow;
     private TextView status, setupDetail, dailyDetail, dailyMeta, lockDetail, selectedLabel;
-    private Button accessibilityButton, usageButton, startButton, paymentButton;
+    private Button accessibilityButton, usageButton, startButton;
     private TimerView timer;
     private int selectedMinutes = 60;
     private boolean querying, resumed;
@@ -61,10 +61,11 @@ public final class MainActivity extends Activity {
         add(lockCard, heading("Lock Instagram now"), 0);
         lockDetail = Ui.text(this, "Choose a duration. No early release.", 14, Ui.MUTED); add(lockCard, lockDetail, 8);
         durationRow = new LinearLayout(this); durationRow.setOrientation(LinearLayout.HORIZONTAL);
-        add(durationRow, choice("30m", 30), 0); add(durationRow, choice("1h", 60), 0); add(durationRow, choice("3h", 180), 0);
+        add(durationRow, choice("30m", 30), 0); add(durationRow, choice("1h", 60), 0);
+        add(durationRow, choice("3h", 180), 0); add(durationRow, choice("24h", 1440), 0);
         Button custom = Ui.button(this, "Custom", () -> numberDialog("Lock duration", "Minutes · 1 to 10,080 (7 days)", selectedMinutes,
                 1, 10080, value -> { selectedMinutes = value; render(); }), false);
-        custom.setTextSize(12); custom.setPadding(dp(4), dp(8), dp(4), dp(8));
+        custom.setMinWidth(0); custom.setTextSize(12); custom.setPadding(dp(4), dp(8), dp(4), dp(8));
         durationRow.addView(custom, weighted()); add(lockCard, durationRow, 18);
         selectedLabel = Ui.text(this, "", 13, Ui.GREEN); add(lockCard, selectedLabel, 10);
         startButton = Ui.button(this, "Start a 1-hour lock", this::confirmLock, true); add(lockCard, startButton, 16);
@@ -79,7 +80,6 @@ public final class MainActivity extends Activity {
         add(setupCard, heading("Make the blocker ready"), 0);
         setupDetail = Ui.text(this, "", 14, Ui.MUTED); add(setupCard, setupDetail, 8);
         accessibilityButton = Ui.button(this, "Enable Instagram blocking", this::showDisclosure, false); add(setupCard, accessibilityButton, 14);
-        paymentButton = Ui.button(this, "Pause Still for a payment", this::showPaymentPause, false); add(setupCard, paymentButton, 10);
         usageButton = Ui.button(this, "Allow daily usage counting", () -> openSettings(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS,
                 Uri.parse("package:" + getPackageName()))), false); add(setupCard, usageButton, 10);
         Button help = Ui.button(this, "Setup help & limits", this::showHelp, false); add(setupCard, help, 10);
@@ -92,7 +92,8 @@ public final class MainActivity extends Activity {
     }
     private Button choice(String label, int minutes) {
         Button button = Ui.button(this, label, () -> { selectedMinutes = minutes; render(); }, false);
-        button.setTextSize(14); button.setTag(minutes); button.setLayoutParams(weighted()); return button;
+        button.setMinWidth(0); button.setTextSize(12); button.setPadding(dp(2), dp(8), dp(2), dp(8));
+        button.setTag(minutes); button.setLayoutParams(weighted()); return button;
     }
     private int dp(int value) { return Ui.dp(this, value); }
     private TextView heading(String value) {
@@ -117,28 +118,9 @@ public final class MainActivity extends Activity {
         return false;
     }
     private boolean ready() { return accessibilityEnabled() && BlockerService.connected(); }
-    private void showPaymentPause() {
-        if (!ready()) { openSettings(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); return; }
-        new AlertDialog.Builder(this).setTitle("Pause Still for a payment")
-                .setMessage("Still will turn off its Accessibility service so you can open a payment app. After paying, return to Still and switch it back on in Android Accessibility settings. Android does not let regular apps turn an Accessibility service back on automatically.")
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Pause Still", (dialog, which) -> {
-                    if (!BlockerService.pauseForPayment()) {
-                        error("Still is reconnecting. Try again once the blocker status is active.");
-                        return;
-                    }
-                    getSharedPreferences("payment_mode", MODE_PRIVATE).edit().putBoolean("paused", true).apply();
-                    render();
-                }).show();
-    }
     private void render() {
         long remaining = store.lockRemaining(); int budget = store.budget();
         boolean ready = ready(), usage = UsageReader.allowed(this);
-        boolean paymentPaused = getSharedPreferences("payment_mode", MODE_PRIVATE).getBoolean("paused", false);
-        if (accessibilityEnabled() && paymentPaused) {
-            getSharedPreferences("payment_mode", MODE_PRIVATE).edit().putBoolean("paused", false).apply();
-            paymentPaused = false;
-        }
         boolean blocked = Rules.blocked(remaining, budget > 0, usage, budget == 0 || store.clockStable(), store.used(), budget * 60000L);
         status.setText(!ready ? "SETUP NEEDED · blocking is inactive" : !usage ? "SETUP NEEDED · allow Instagram usage access" : blocked ? "INSTAGRAM LOCKED" : "AUTOMATIC 1-HOUR LIMIT ACTIVE");
         status.setTextColor(ready ? Ui.GREEN : Ui.MUTED);
@@ -170,7 +152,6 @@ public final class MainActivity extends Activity {
                 : accessibilityEnabled() ? "Permission is on, but the blocker is reconnecting. If this persists, toggle Still off and on in Accessibility."
                 : "Enable Still in Accessibility. It only checks app names and sends you home when Instagram is locked.");
         accessibilityButton.setText(ready ? "Blocking enabled · open settings" : "Enable Instagram blocking");
-        paymentButton.setText(ready ? "Pause Still for a payment" : paymentPaused ? "Re-enable Still after payment" : "Accessibility is off · open settings");
         usageButton.setText(usage ? "Usage access enabled · open settings" : "Allow daily usage counting");
         if (resumed && budget > 0 && usage && !querying && android.os.SystemClock.elapsedRealtime() - lastQuery > 2000) {
             querying = true; lastQuery = android.os.SystemClock.elapsedRealtime();
@@ -186,7 +167,7 @@ public final class MainActivity extends Activity {
     }
     private void confirmLock() {
         new AlertDialog.Builder(this).setTitle("Lock Instagram for " + humanDuration(selectedMinutes) + "?")
-                .setMessage("The lock starts immediately. There is no pause or cancel button. Closing Still will not clear it.\n\nAndroid Settings can still disable the blocker.")
+                .setMessage("The lock starts immediately and lasts " + humanDuration(selectedMinutes) + ". There is no pause or cancel button. Closing Still will not clear it.\n\nAndroid Settings can still disable the blocker or uninstall Still; uninstalling removes this local lock.")
                 .setNegativeButton("Not yet", null).setPositiveButton("Start lock", (dialog, which) -> {
                     if (!ready()) { render(); return; }
                     if (!store.startLock(selectedMinutes)) error("The lock could not be saved. Try again.");

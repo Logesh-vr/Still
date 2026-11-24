@@ -4,16 +4,16 @@ An offline Android app that blocks Instagram after **one hour of Instagram use e
 
 Time in other apps does not count toward the Instagram limit. Instagram and Instagram Lite share the daily hour. The daily rule resets at local midnight and starts automatically after permission setup.
 
-[Download Still 1.2.0 APK](https://github.com/Logesh-vr/Still/raw/refs/heads/main/releases/Still-1.2.0.apk) · [Install and enable](docs/INSTALLATION.md) · [Build from source](docs/BUILDING.md)
+[Download Still 1.3.0 APK](https://github.com/Logesh-vr/Still/raw/refs/heads/main/releases/Still-1.3.0.apk) · [Install and enable](docs/INSTALLATION.md) · [Build from source](docs/BUILDING.md)
 
-**Status:** signed test build for Android 8.0+. Compilation, 30 policy assertions, APK packaging, and signatures have been checked. Phone installation and blocking behavior have not been verified. See [validation](docs/VALIDATION.md) and the [device checklist](docs/DEVICE_TESTING.md).
+**Status:** signed test build for Android 8.0+. Java compilation, APK packaging, and signatures have been checked. The existing policy suite contains 30 assertions; it was not rerun for this update. Phone installation and blocking behavior have not been verified. See [validation](docs/VALIDATION.md) and the [device checklist](docs/DEVICE_TESTING.md).
 
 ## Behavior
 
 | Rule | When it blocks | When access returns |
 | --- | --- | --- |
 | Automatic daily limit | Instagram foreground use reaches 60 minutes today | At the next daily reset, if no timed lock remains |
-| Manual timed lock | Immediately after starting a lock of 1 minute to 7 days | When the duration ends, if the daily hour remains |
+| Manual timed lock | Immediately after starting a lock of 1 minute to 7 days, including the 24-hour preset | When the duration ends, if the daily hour remains |
 
 There is no in-app cancellation for an active timed lock, or an off switch/increase for the daily hour. Instagram usage earlier today already counts. Daily usage reads normally refresh about once a second while Instagram is visible; Android event delivery can introduce a delay.
 
@@ -26,9 +26,7 @@ Install the APK, open Still, and grant:
 
 Once both are ready, the daily rule runs without starting a timer. Use **Lock Instagram now** for the separate immediate lock. Missing Usage access causes Instagram to block while the accessibility service is enabled. Follow [the setup guide](docs/INSTALLATION.md) for restricted-settings and battery troubleshooting.
 
-### Payment apps
-
-Some payment apps refuse to run while an Accessibility service is enabled. In Still, tap **Pause Still for a payment** before opening one. Still turns its own service off; after paying, return to Still, tap **Re-enable Still after payment**, and switch it on in Android Accessibility settings. Android does not let a regular app turn an Accessibility service back on automatically, so this requires a manual switch. See [Android's AccessibilityService lifecycle](https://developer.android.com/reference/android/accessibilityservice/AccessibilityService#disableSelf()) and [secure settings restrictions](https://developer.android.com/reference/android/provider/Settings.Secure).
+The 24-hour lock starts when you confirm it and lasts for the next 24 hours. It is stored locally, so uninstalling Still or clearing its data removes that lock. Android only allows a device or profile owner to block uninstalling apps; this standard APK cannot protect itself from removal. See [Android's DevicePolicyManager documentation](https://developer.android.com/reference/android/app/admin/DevicePolicyManager).
 
 ## How it works
 
